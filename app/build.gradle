@@ -8,12 +8,38 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
+
+        ndk {
+            //选择要添加的对应 cpu 类型的 .so 库。
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
+        }
+
+        // todo: 替换成你生产环境的JPUSH_PKGNAME,JPUSH_APPKEY
+        manifestPlaceholders = [
+                JPUSH_PKGNAME : applicationId,
+                JPUSH_APPKEY : "xxxxxxxx", //JPush 上注册的包名对应的 Appkey.
+                JPUSH_CHANNEL : "android", //暂时填写默认值即可.
+        ]
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+
+        // 极光推送debug模式用于测试
+        debug {
+            minifyEnabled false
+            shrinkResources false // 是否去除无效的资源文件
+            applicationIdSuffix ".debug"
+
+            // todo: 替换成你debug模式下的JPUSH_PKGNAME,JPUSH_APPKEY;如果不需要可去掉（使用生产环境）
+            manifestPlaceholders = [JPUSH_PKGNAME: "ysn.com.jpushdemo.debug",
+                                    JPUSH_APPKEY : "xxxxxxxx", //JPush 上注册的包名对应的debug Appkey.
+            ]
         }
     }
 }
@@ -25,4 +51,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // Logcat
+    implementation 'com.lazy.logging:library:1.3.1'
+
+    // 极光推送
+    implementation 'cn.jiguang.sdk:jpush:3.3.2'
+    implementation 'cn.jiguang.sdk:jcore:2.1.0'
 }
