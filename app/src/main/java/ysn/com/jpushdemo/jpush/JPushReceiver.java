@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import com.lazy.library.logging.Logcat;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,6 +17,7 @@ import java.util.Objects;
 
 import cn.jpush.android.api.JPushInterface;
 import ysn.com.jpushdemo.MainActivity;
+import ysn.com.jpushdemo.model.event.TextEvent;
 
 /**
  * @Author yangsanning
@@ -36,11 +38,13 @@ public class JPushReceiver extends BroadcastReceiver {
         try {
             Bundle bundle = intent.getExtras();
             assert bundle != null;
+            String msg = printBundle(bundle);
             Logcat.d().tag(TAG).ln().ln()
                     .msg("---- " + intent.getAction() + " Print Start ----").ln()
-                    .msg(printBundle(bundle)).ln().ln()
+                    .msg(msg).ln().ln()
                     .msg("---- " + intent.getAction() + " Print End ----").ln()
                     .out();
+            EventBus.getDefault().post(new TextEvent(msg));
 
             switch (Objects.requireNonNull(intent.getAction())) {
                 case JPushInterface.ACTION_CONNECTION_CHANGE:
